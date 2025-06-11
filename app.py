@@ -93,3 +93,12 @@ if uploaded_file:
             st.markdown(f"a: `{lab[1]:.2f}`")
         with col5:
             st.markdown(f"b: `{lab[2]:.2f}`")
+
+st.markdown("---")
+st.markdown(
+    "<div style='text-align: center; font-size: 0.9em; color: gray;'>"
+    "Developed by <strong>Ivan Leonov</strong> · ialeonov@gmail.com · 2025"
+    "</div>",
+    unsafe_allow_html=True
+)
+
