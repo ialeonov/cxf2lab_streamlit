@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import streamlit as st
 import xml.etree.ElementTree as ET
 from colormath.color_objects import SpectralColor, LabColor, sRGBColor, LCHabColor
@@ -128,6 +129,28 @@ if uploaded_file:
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
+# === График LCH: круг насыщенности ===
+import numpy as np
+
+st.markdown("### Цветовой круг (LCh)")
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(111, polar=True)
+
+for name, lab, rgb, lch in results:
+    theta = np.deg2rad(lch.lch_h)
+    r = lch.lch_c
+    ax.scatter(theta, r, color=np.array(rgb)/255, s=100, edgecolor='black', alpha=0.9)
+
+ax.set_theta_zero_location('E')  # 0° справа
+ax.set_theta_direction(-1)       # по часовой стрелке
+ax.set_rlabel_position(135)
+ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom')
+ax.grid(True)
+
+st.pyplot(fig)
+
+
 # Футер
 st.markdown("---")
 st.markdown(
@@ -136,3 +159,4 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True
 )
+
