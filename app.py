@@ -145,7 +145,7 @@ if uploaded_file:
             delta_e = delta_e_cie1976(user_lab, lab)
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{delta_e:.2f}</span>", unsafe_allow_html=True)
 
-'''
+    
     # === График LCH ===
     st.markdown("### Цветовой круг (LCh)")
 
@@ -167,7 +167,6 @@ if uploaded_file:
     st.pyplot(fig, use_container_width=False)
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
-'''
 
 # Футер
 st.markdown("---")
