@@ -135,21 +135,34 @@ if uploaded_file and results:
 
     st.markdown("### Цветовой круг (LCh)")
 
-    fig = plt.figure(figsize=(4, 4))  # размер 400x400 px примерно
+    fig = plt.figure(figsize=(4, 4), dpi=100)  # ~400x400 пикселей
     ax = fig.add_subplot(111, polar=True)
 
     for name, lab, rgb, lch in results:
         theta = np.deg2rad(lch.lch_h)
         r = lch.lch_c
-        ax.scatter(theta, r, color=np.array(rgb)/255, s=100, edgecolor='black', alpha=0.9)
+        ax.scatter(
+            theta,
+            r,
+            color=np.array(rgb)/255,
+            s=40,               # размер точки
+            edgecolor='black',
+            linewidth=0.5,
+            alpha=0.9
+        )
 
-    ax.set_theta_zero_location('E')  # 0° справа
-    ax.set_theta_direction(-1)       # по часовой стрелке
+    ax.set_theta_zero_location('E')
+    ax.set_theta_direction(-1)
     ax.set_rlabel_position(135)
-    ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=12)
-    ax.grid(True)
+    ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=10)
 
-    st.pyplot(fig)
+    # уменьшение шрифтов
+    ax.tick_params(labelsize=8)
+
+    # плотнее сетка
+    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
+
+    st.pyplot(fig, use_container_width=False)
 
 
 # Футер
