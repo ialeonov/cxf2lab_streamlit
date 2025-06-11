@@ -108,16 +108,17 @@ if uploaded_file:
         user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
     st.markdown("""
-<div style='
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-'>
-    <h3 style='text-align:center; color:#444;'>🎨 Результаты</h3>
-</div>
-""", unsafe_allow_html=True)
+    <div style='
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    '>
+        <h3 style='text-align:center; color:#444;'>🎨 Результаты</h3>
+    </div>
+    """, unsafe_allow_html=True)
+
     header_cols = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
     with header_cols[0]: st.markdown("**Цвет**")
     with header_cols[1]: st.markdown("**Название**")
@@ -160,28 +161,27 @@ if uploaded_file:
             delta_e = delta_e_simple(user_lab, lab)
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{delta_e:.2f}</span>", unsafe_allow_html=True)
 
-    # === График LCH ===
     with st.expander("🌈 Показать цветовой круг (LCh)"):
-    st.markdown("""
-    <div style='margin-top: 1rem;'>
-      <h3 style='color: #444;'>🌈 Цветовой круг (LCh)</h3>
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style='margin-top: 1rem;'>
+          <h3 style='color: #444;'>🌈 Цветовой круг (LCh)</h3>
+        </div>
+        """, unsafe_allow_html=True)
 
-    fig = plt.figure(figsize=(4, 4), dpi=100)
-    ax = fig.add_subplot(111, polar=True)
+        fig = plt.figure(figsize=(4, 4), dpi=100)
+        ax = fig.add_subplot(111, polar=True)
 
-    for name, lab, rgb, lch in results:
-        theta = np.deg2rad(lch.lch_h)
-        r = lch.lch_c
-        ax.scatter(theta, r, color=np.array(rgb)/255, s=40, edgecolor='black', linewidth=0.5, alpha=0.9)
+        for name, lab, rgb, lch in results:
+            theta = np.deg2rad(lch.lch_h)
+            r = lch.lch_c
+            ax.scatter(theta, r, color=np.array(rgb)/255, s=40, edgecolor='black', linewidth=0.5, alpha=0.9)
 
-    ax.set_theta_zero_location('E')
-    ax.set_theta_direction(-1)
-    ax.set_rlabel_position(135)
-    ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=10)
-    ax.tick_params(labelsize=8)
-    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
+        ax.set_theta_zero_location('E')
+        ax.set_theta_direction(-1)
+        ax.set_rlabel_position(135)
+        ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=10)
+        ax.tick_params(labelsize=8)
+        ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
 
         st.pyplot(fig, use_container_width=False)
 else:
