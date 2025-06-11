@@ -99,15 +99,33 @@ if uploaded_file:
     with header_cols[6]: st.markdown("**h°**")
 
     for name, lab, rgb, lch in results:
-        col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
-        with col1:
-            st.markdown(f"<div style='width:36px;height:36px;background-color:rgb({rgb[0]},{rgb[1]},{rgb[2]});border:1px solid #ccc'></div>", unsafe_allow_html=True)
-        with col2: st.markdown(f"**{name}**")
-        with col3: st.markdown(f"`{lab.lab_l:.2f}`")
-        with col4: st.markdown(f"`{lab.lab_a:.2f}`")
-        with col5: st.markdown(f"`{lab.lab_b:.2f}`")
-        with col6: st.markdown(f"`{lch.lch_c:.2f}`")
-        with col7: st.markdown(f"`{lch.lch_h:.1f}°`")
+    col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
+    
+    with col1:
+        st.markdown(f"""
+        <div style='display:flex; align-items:center; height:100%;'>
+            <div style='width:36px; height:36px; background-color:rgb({rgb[0]},{rgb[1]},{rgb[2]}); border:1px solid #ccc;'></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{name}</span>", unsafe_allow_html=True)
+    
+        with col3:
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lab.lab_l:.2f}</span>", unsafe_allow_html=True)
+    
+        with col4:
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lab.lab_a:.2f}</span>", unsafe_allow_html=True)
+    
+        with col5:
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lab.lab_b:.2f}</span>", unsafe_allow_html=True)
+    
+        with col6:
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_c:.2f}</span>", unsafe_allow_html=True)
+    
+        with col7:
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_h:.1f}°</span>", unsafe_allow_html=True)
+
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
