@@ -130,25 +130,26 @@ else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
 # === График LCH: круг насыщенности ===
-import numpy as np
+if uploaded_file and results:
+    import numpy as np
 
-st.markdown("### Цветовой круг (LCh)")
+    st.markdown("### Цветовой круг (LCh)")
 
-fig = plt.figure(figsize=(6, 6))
-ax = fig.add_subplot(111, polar=True)
+    fig = plt.figure(figsize=(4, 4))  # размер 400x400 px примерно
+    ax = fig.add_subplot(111, polar=True)
 
-for name, lab, rgb, lch in results:
-    theta = np.deg2rad(lch.lch_h)
-    r = lch.lch_c
-    ax.scatter(theta, r, color=np.array(rgb)/255, s=100, edgecolor='black', alpha=0.9)
+    for name, lab, rgb, lch in results:
+        theta = np.deg2rad(lch.lch_h)
+        r = lch.lch_c
+        ax.scatter(theta, r, color=np.array(rgb)/255, s=100, edgecolor='black', alpha=0.9)
 
-ax.set_theta_zero_location('E')  # 0° справа
-ax.set_theta_direction(-1)       # по часовой стрелке
-ax.set_rlabel_position(135)
-ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom')
-ax.grid(True)
+    ax.set_theta_zero_location('E')  # 0° справа
+    ax.set_theta_direction(-1)       # по часовой стрелке
+    ax.set_rlabel_position(135)
+    ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=12)
+    ax.grid(True)
 
-st.pyplot(fig)
+    st.pyplot(fig)
 
 
 # Футер
