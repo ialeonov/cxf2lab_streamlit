@@ -2,4 +2,3 @@ streamlit
 colormath
 lxml
 matplotlib
-numpy==1.22.4
