@@ -2,10 +2,17 @@ import streamlit as st
 import xml.etree.ElementTree as ET
 from colormath.color_objects import SpectralColor, LabColor, sRGBColor, LCHabColor
 from colormath.color_conversions import convert_color
-from colormath.color_diff import delta_e_cie1976
 import matplotlib.pyplot as plt
 import numpy as np
 import io
+
+# Ручный рассчёт deltaE (CIE76)
+def delta_e_simple(color1: LabColor, color2: LabColor):
+    return np.sqrt(
+        (color1.lab_l - color2.lab_l) ** 2 +
+        (color1.lab_a - color2.lab_a) ** 2 +
+        (color1.lab_b - color2.lab_b) ** 2
+    )
 
 # Настройки страницы
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
@@ -91,7 +98,6 @@ if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
-    # Ввод своего LAB и дельты
     st.markdown("### Сравнение с заданным цветом")
 
     with st.expander("🔍 Ввести собственные координаты Lab"):
@@ -101,7 +107,6 @@ if uploaded_file:
 
         user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
-    # Заголовки таблицы
     st.markdown("### Результаты:")
     header_cols = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
     with header_cols[0]: st.markdown("**Цвет**")
@@ -142,10 +147,9 @@ if uploaded_file:
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_h:.1f}°</span>", unsafe_allow_html=True)
 
         with col8:
-            delta_e = delta_e_cie1976(user_lab, lab)
+            delta_e = delta_e_simple(user_lab, lab)
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{delta_e:.2f}</span>", unsafe_allow_html=True)
 
-    
     # === График LCH ===
     st.markdown("### Цветовой круг (LCh)")
 
