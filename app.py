@@ -98,16 +98,26 @@ if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
-    st.markdown("#### Сравнение с заданным цветом")
+    st.markdown("### Сравнение с заданным цветом")
 
-    with st.expander("🔍 Ввести собственные координаты Lab. Они отобразятся в графе ΔE в блоке Результаты напротив каждого из цветов"):
+    with st.expander("🔍 Ввести собственные координаты Lab"):
         input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
         input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
         input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
 
         user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
-    st.markdown("## Результаты:")
+    st.markdown("""
+<div style='
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+'>
+    <h3 style='text-align:center; color:#444;'>🎨 Результаты</h3>
+</div>
+""", unsafe_allow_html=True)
     header_cols = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
     with header_cols[0]: st.markdown("**Цвет**")
     with header_cols[1]: st.markdown("**Название**")
