@@ -16,7 +16,7 @@ def delta_e_simple(color1: LabColor, color2: LabColor):
 
 # Настройки страницы
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
-st.title("🎨 CXF → CIE Lab конвертер")
+st.title("🌌 CXF → CIE Lab конвертер")
 
 uploaded_file = st.file_uploader("Загрузите CXF-файл", type=["cxf"])
 
@@ -115,7 +115,7 @@ if uploaded_file:
         border-radius: 10px;
         margin-bottom: 1rem;
     '>
-        <h3 style='text-align:center; color:#444;'>🎨 Результаты</h3>
+        <h3 style='text-align:center; color:#444;'>💡 Результаты</h3>
     </div>
     """, unsafe_allow_html=True)
 
