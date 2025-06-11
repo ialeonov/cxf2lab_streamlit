@@ -1,14 +1,16 @@
 import streamlit as st
 import xml.etree.ElementTree as ET
-from colormath.color_objects import SpectralColor, LabColor, sRGBColor
+from colormath.color_objects import SpectralColor, LabColor, sRGBColor, LCHabColor
 from colormath.color_conversions import convert_color
 import io
 
+# Настройки страницы
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
 st.title("🎨 CXF → CIE Lab Конвертер")
 
 uploaded_file = st.file_uploader("Загрузите CXF-файл", type=["cxf"])
 
+# Парсинг CXF
 def parse_cxf(file_content):
     ns = '{http://colorexchangeformat.com/CxF3-core}'
     tree = ET.parse(io.BytesIO(file_content))
@@ -44,6 +46,7 @@ def parse_cxf(file_content):
 
     return color_data, lab_data, spec_mode
 
+# Дополнение спектра
 def pad_spectral_data(values, mode):
     if mode == '1':
         values = ['0.0'] * 6 + values + ['0.0'] * 13
@@ -51,6 +54,7 @@ def pad_spectral_data(values, mode):
         values = ['0.0'] * 4 + values + ['0.0'] * 10
     return [float(v) for v in values]
 
+# Конвертация в LAB + RGB + LCH
 def convert_to_lab(data_dict, lab_dict, mode):
     results = []
     all_keys = sorted(set(data_dict.keys()) | set(lab_dict.keys()))
@@ -67,33 +71,47 @@ def convert_to_lab(data_dict, lab_dict, mode):
 
         lab_obj = LabColor(*lab)
         rgb_obj = convert_color(lab_obj, sRGBColor)
+        lch_obj = convert_color(lab_obj, LCHabColor)
+
         rgb = (
             max(0, min(255, int(rgb_obj.clamped_rgb_r * 255))),
             max(0, min(255, int(rgb_obj.clamped_rgb_g * 255))),
             max(0, min(255, int(rgb_obj.clamped_rgb_b * 255))),
         )
-        results.append((name, lab, rgb))
+
+        results.append((name, lab_obj, rgb, lch_obj))
 
     return results
 
+# Отображение результатов
 if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
     st.markdown("### Результаты:")
-    for name, lab, rgb in results:
-        col1, col2, col3, col4, col5 = st.columns([1, 4, 1, 1, 1])
-        with col1:
-            st.markdown(f"<div style='width:40px;height:40px;background-color:rgb({rgb[0]},{rgb[1]},{rgb[2]});border:1px solid #ccc'></div>", unsafe_allow_html=True)
-        with col2:
-            st.markdown(f"**{name}**")
-        with col3:
-            st.markdown(f"L: `{lab[0]:.2f}`")
-        with col4:
-            st.markdown(f"a: `{lab[1]:.2f}`")
-        with col5:
-            st.markdown(f"b: `{lab[2]:.2f}`")
+    header_cols = st.columns([1, 4, 1, 1, 1, 1, 1])
+    with header_cols[0]: st.markdown("**Цвет**")
+    with header_cols[1]: st.markdown("**Название**")
+    with header_cols[2]: st.markdown("**L**")
+    with header_cols[3]: st.markdown("**a**")
+    with header_cols[4]: st.markdown("**b**")
+    with header_cols[5]: st.markdown("**C**")
+    with header_cols[6]: st.markdown("**h°**")
 
+    for name, lab, rgb, lch in results:
+        col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
+        with col1:
+            st.markdown(f"<div style='width:36px;height:36px;background-color:rgb({rgb[0]},{rgb[1]},{rgb[2]});border:1px solid #ccc'></div>", unsafe_allow_html=True)
+        with col2: st.markdown(f"**{name}**")
+        with col3: st.markdown(f"`{lab.lab_l:.2f}`")
+        with col4: st.markdown(f"`{lab.lab_a:.2f}`")
+        with col5: st.markdown(f"`{lab.lab_b:.2f}`")
+        with col6: st.markdown(f"`{lch.lch_c:.2f}`")
+        with col7: st.markdown(f"`{lch.lch_h:.1f}°`")
+else:
+    st.info("Пожалуйста, загрузите CXF-файл для обработки.")
+
+# Футер
 st.markdown("---")
 st.markdown(
     "<div style='text-align: center; font-size: 0.9em; color: gray;'>"
@@ -101,4 +119,3 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True
 )
-
