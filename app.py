@@ -161,7 +161,12 @@ if uploaded_file:
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{delta_e:.2f}</span>", unsafe_allow_html=True)
 
     # === График LCH ===
-    st.markdown("### Цветовой круг (LCh)")
+    with st.expander("🌈 Показать цветовой круг (LCh)"):
+    st.markdown("""
+    <div style='margin-top: 1rem;'>
+      <h3 style='color: #444;'>🌈 Цветовой круг (LCh)</h3>
+    </div>
+    """, unsafe_allow_html=True)
 
     fig = plt.figure(figsize=(4, 4), dpi=100)
     ax = fig.add_subplot(111, polar=True)
@@ -178,7 +183,7 @@ if uploaded_file:
     ax.tick_params(labelsize=8)
     ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
 
-    st.pyplot(fig, use_container_width=False)
+        st.pyplot(fig, use_container_width=False)
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
