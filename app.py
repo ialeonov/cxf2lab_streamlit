@@ -1,13 +1,15 @@
-import matplotlib.pyplot as plt
 import streamlit as st
 import xml.etree.ElementTree as ET
 from colormath.color_objects import SpectralColor, LabColor, sRGBColor, LCHabColor
 from colormath.color_conversions import convert_color
+from colormath.color_diff import delta_e_cie1976
+import matplotlib.pyplot as plt
+import numpy as np
 import io
 
 # Настройки страницы
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
-st.title("🎨 CXF → CIE Lab Конвертер")
+st.title("🎨 CXF → CIE Lab конвертер")
 
 uploaded_file = st.file_uploader("Загрузите CXF-файл", type=["cxf"])
 
@@ -84,13 +86,24 @@ def convert_to_lab(data_dict, lab_dict, mode):
 
     return results
 
-# Отображение результатов
+# Основная логика
 if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
+    # Ввод своего LAB и дельты
+    st.markdown("### Сравнение с заданным цветом")
+
+    with st.expander("🔍 Ввести собственные координаты Lab"):
+        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
+
+        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
+
+    # Заголовки таблицы
     st.markdown("### Результаты:")
-    header_cols = st.columns([1, 4, 1, 1, 1, 1, 1])
+    header_cols = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
     with header_cols[0]: st.markdown("**Цвет**")
     with header_cols[1]: st.markdown("**Название**")
     with header_cols[2]: st.markdown("**L**")
@@ -98,10 +111,11 @@ if uploaded_file:
     with header_cols[4]: st.markdown("**b**")
     with header_cols[5]: st.markdown("**C**")
     with header_cols[6]: st.markdown("**h°**")
+    with header_cols[7]: st.markdown("**ΔE**")
 
     for name, lab, rgb, lch in results:
-        col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
-        
+        col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
+
         with col1:
             st.markdown(f"""
             <div style='display:flex; align-items:center; height:100%;'>
@@ -126,44 +140,34 @@ if uploaded_file:
 
         with col7:
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_h:.1f}°</span>", unsafe_allow_html=True)
-else:
-    st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
-# === График LCH: круг насыщенности ===
-if uploaded_file and results:
-    import numpy as np
+        with col8:
+            delta_e = delta_e_cie1976(user_lab, lab)
+            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{delta_e:.2f}</span>", unsafe_allow_html=True)
 
+'''
+    # === График LCH ===
     st.markdown("### Цветовой круг (LCh)")
 
-    fig = plt.figure(figsize=(4, 4), dpi=100)  # ~400x400 пикселей
+    fig = plt.figure(figsize=(4, 4), dpi=100)
     ax = fig.add_subplot(111, polar=True)
 
     for name, lab, rgb, lch in results:
         theta = np.deg2rad(lch.lch_h)
         r = lch.lch_c
-        ax.scatter(
-            theta,
-            r,
-            color=np.array(rgb)/255,
-            s=40,               # размер точки
-            edgecolor='black',
-            linewidth=0.5,
-            alpha=0.9
-        )
+        ax.scatter(theta, r, color=np.array(rgb)/255, s=40, edgecolor='black', linewidth=0.5, alpha=0.9)
 
     ax.set_theta_zero_location('E')
     ax.set_theta_direction(-1)
     ax.set_rlabel_position(135)
     ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=10)
-
-    # уменьшение шрифтов
     ax.tick_params(labelsize=8)
-
-    # плотнее сетка
     ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
 
     st.pyplot(fig, use_container_width=False)
-
+else:
+    st.info("Пожалуйста, загрузите CXF-файл для обработки.")
+'''
 
 # Футер
 st.markdown("---")
@@ -173,4 +177,3 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True
 )
-
