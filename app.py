@@ -98,9 +98,9 @@ if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
-    st.markdown("### Сравнение с заданным цветом")
+    st.markdown("# Сравнение с заданным цветом")
 
-    with st.expander("🔍 Ввести собственные координаты Lab"):
+    with st.expander("🔍 Ввести собственные координаты Lab. Они отобразятся в графе ΔE в блоке Результаты напротив кажддого из цветов"):
         input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
         input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
         input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
