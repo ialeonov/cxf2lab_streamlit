@@ -159,6 +159,18 @@ if uploaded_files:
                 delta = delta_e_simple(user_lab, lab)
                 st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
 
+    # Дополнительное сравнение, если два файла и по одному цвету в каждом
+    if len(all_results) == 2:
+        keys = list(all_results.keys())
+        file1, file2 = keys[0], keys[1]
+        if len(all_results[file1]) == 1 and len(all_results[file2]) == 1:
+            name1, lab1, _, _ = all_results[file1][0]
+            name2, lab2, _, _ = all_results[file2][0]
+            delta = delta_e_simple(lab1, lab2)
+            st.markdown("---")
+            st.markdown(f"### 📏 ΔE между цветом из `{file1}` и `{file2}`:")
+            st.markdown(f"{name1} ↔ {name2} → ΔE = **{delta:.2f}**")
+
 # Футер
 st.markdown("---")
 st.markdown(
