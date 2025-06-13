@@ -151,10 +151,6 @@ if uploaded_file:
         with col7:
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_h:.1f}°</span>", unsafe_allow_html=True)
 
-        with col8:
-            st.markdown("<span style='font-size:1.1em; font-weight:500'>—</span>", unsafe_allow_html=True)
-        else:
-            st.markdown("<span style='font-size:1.1em; font-weight:500'>—</span>", unsafe_allow_html=True)
 
     with st.expander("🌈 Показать цветовой круг (LCh)"):
         st.markdown("""
