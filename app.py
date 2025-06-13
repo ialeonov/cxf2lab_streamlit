@@ -180,7 +180,7 @@ if uploaded_file:
         ax.tick_params(labelsize=8)
         ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
 
-            st.pyplot(fig, use_container_width=False)
+        st.pyplot(fig, use_container_width=False)
 
     with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
         input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
