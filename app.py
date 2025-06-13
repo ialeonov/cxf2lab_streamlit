@@ -124,7 +124,7 @@ if uploaded_file:
     with header_cols[6]: st.markdown("**h°**")
 
     for name, lab, rgb, lch in results:
-        col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
+        col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
 
         with col1:
             st.markdown(f"""
