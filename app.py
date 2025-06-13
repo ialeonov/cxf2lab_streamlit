@@ -177,10 +177,10 @@ if uploaded_file:
         st.pyplot(fig, use_container_width=False)
 
     with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
-    input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
-    input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
-    input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
-    user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
+        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
+        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
     st.markdown("### ΔE между введённым цветом и каждым цветом из CXF:")
     for name, lab, _, _ in results:
