@@ -18,7 +18,7 @@ def delta_e_simple(color1: LabColor, color2: LabColor):
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
 st.title("🎨 CXF → CIE Lab конвертер")
 
-uploaded_files = st.file_uploader("Загрузите один или несколько CXF-файлов", type=["cxf"], accept_multiple_files=True)
+uploaded_files = st.file_uploader("Загрузите один или несколько CXF-файлов. Если загрузите 2 файла, содержащих по 1 цвету, то увидите сравнение ΔE", type=["cxf"], accept_multiple_files=True)
 
 # Парсинг CXF
 def parse_cxf(file_content):
@@ -103,7 +103,7 @@ if uploaded_files:
 
     st.markdown("""
     <div style='background-color:#f9f9f9; padding:1rem; border:1px solid #ccc; border-radius:10px; margin-bottom:1rem;'>
-        <h3 style='text-align:center; color:#444;'>🎨 Результаты по каждому файлу</h3>
+        <h4 style='text-align:center; color:#444;'>Результаты по каждому файлу</h4>
     </div>
     """, unsafe_allow_html=True)
 
