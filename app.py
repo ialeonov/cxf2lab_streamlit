@@ -102,7 +102,7 @@ if uploaded_files:
         all_results[file.name] = results
 
     st.markdown("""
-    <div style='background-color:#f9f9f9; padding:1rem; border:1px solid #ccc; border-radius:10px; margin-bottom:1rem;'>
+    <div style='background-color:#f9f9f9; padding:1rem; border:1px solid #ccc; border-radius:5px; margin-bottom:1rem;'>
         <h4 style='text-align:center; color:#444;'>Результаты по каждому файлу</h4>
     </div>
     """, unsafe_allow_html=True)
