@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 
-# Ручный рассчёт deltaE (CIE76)
+# Ручный расчёт deltaE (CIE76)
 def delta_e_simple(color1: LabColor, color2: LabColor):
     return np.sqrt(
         (color1.lab_l - color2.lab_l) ** 2 +
@@ -98,8 +98,14 @@ if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
-    
+    # Ввод координат Lab
+    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
+        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
+        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
+    # Результаты
     st.markdown("""
     <div style='
         background-color: #f9f9f9;
@@ -177,11 +183,6 @@ if uploaded_file:
         ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
 
         st.pyplot(fig, use_container_width=False)
-        with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
-            input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
-            input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
-            input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
-            user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
