@@ -93,6 +93,7 @@ def convert_to_lab(data_dict, lab_dict, mode):
 
     return results
 
+
 if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
@@ -152,6 +153,18 @@ if uploaded_file:
             st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_h:.1f}°</span>", unsafe_allow_html=True)
 
 
+    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
+        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
+        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
+
+    st.markdown("### ΔE между введённым цветом и каждым цветом из CXF:")
+    for name, lab, _, _ in results:
+        delta = delta_e_simple(user_lab, lab)
+        st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
+
+    
     with st.expander("🌈 Показать цветовой круг (LCh)"):
         st.markdown("""
         <div style='margin-top: 1rem;'>
@@ -176,18 +189,9 @@ if uploaded_file:
 
         st.pyplot(fig, use_container_width=False)
 
-    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
-        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
-        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
-        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
-        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
-
-    st.markdown("### ΔE между введённым цветом и каждым цветом из CXF:")
-    for name, lab, _, _ in results:
-        delta = delta_e_simple(user_lab, lab)
-        st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
+
 
 # Футер
 st.markdown("---")
