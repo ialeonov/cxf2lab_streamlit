@@ -16,7 +16,7 @@ def delta_e_simple(color1: LabColor, color2: LabColor):
 
 # Настройки страницы
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
-st.title("🌌 CXF → CIE Lab конвертер")
+st.title("🎨 CXF → CIE Lab конвертер")
 
 uploaded_file = st.file_uploader("Загрузите CXF-файл", type=["cxf"])
 
@@ -98,14 +98,13 @@ if uploaded_file:
     data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
     results = convert_to_lab(data_dict, lab_dict, mode)
 
-    st.markdown("### Сравнение с заданным цветом")
+    comparison_expander = st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)")
+with comparison_expander:
+    input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+    input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+    input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
 
-    with st.expander("🔍 Ввести собственные координаты Lab для сравнения с каждым цветом из вашего CXF (результат отобразится в графе ΔE)"):
-        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
-        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
-        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
-
-        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
+    user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
     st.markdown("""
     <div style='
@@ -115,7 +114,7 @@ if uploaded_file:
         border-radius: 10px;
         margin-bottom: 1rem;
     '>
-        <h3 style='text-align:center; color:#444;'>💡 Результаты</h3>
+        <h3 style='text-align:center; color:#444;'>🎨 Результаты</h3>
     </div>
     """, unsafe_allow_html=True)
 
