@@ -18,7 +18,7 @@ def delta_e_simple(color1: LabColor, color2: LabColor):
 st.set_page_config(page_title="CXF → CIE Lab", layout="wide")
 st.title("🎨 CXF → CIE Lab конвертер")
 
-uploaded_file = st.file_uploader("Загрузите CXF-файл", type=["cxf"])
+uploaded_files = st.file_uploader("Загрузите один или несколько CXF-файлов", type=["cxf"], accept_multiple_files=True)
 
 # Парсинг CXF
 def parse_cxf(file_content):
@@ -93,104 +93,66 @@ def convert_to_lab(data_dict, lab_dict, mode):
 
     return results
 
+if uploaded_files:
+    all_results = {}
 
-if uploaded_file:
-    data_dict, lab_dict, mode = parse_cxf(uploaded_file.read())
-    results = convert_to_lab(data_dict, lab_dict, mode)
+    for file in uploaded_files:
+        data_dict, lab_dict, mode = parse_cxf(file.read())
+        results = convert_to_lab(data_dict, lab_dict, mode)
+        all_results[file.name] = results
 
-    # Временно задаем None, чтобы не падало в таблице
-    user_lab = None
-
-    # Результаты
     st.markdown("""
-    <div style='
-        background-color: #f9f9f9;
-        padding: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-    '>
-        <h3 style='text-align:center; color:#444;'>🎨 Результаты</h3>
+    <div style='background-color:#f9f9f9; padding:1rem; border:1px solid #ccc; border-radius:10px; margin-bottom:1rem;'>
+        <h3 style='text-align:center; color:#444;'>🎨 Результаты по каждому файлу</h3>
     </div>
     """, unsafe_allow_html=True)
 
-    header_cols = st.columns([1, 4, 1, 1, 1, 1, 1])
-    with header_cols[0]: st.markdown("**Цвет**")
-    with header_cols[1]: st.markdown("**Название**")
-    with header_cols[2]: st.markdown("**L**")
-    with header_cols[3]: st.markdown("**a**")
-    with header_cols[4]: st.markdown("**b**")
-    with header_cols[5]: st.markdown("**C**")
-    with header_cols[6]: st.markdown("**h°**")
-
-    for name, lab, rgb, lch in results:
-        col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
-
-        with col1:
-            st.markdown(f"""
-            <div style='display:flex; align-items:center; height:100%;'>
-                <div style='width:36px; height:36px; background-color:rgb({rgb[0]},{rgb[1]},{rgb[2]}); border:1px solid #ccc;'></div>
-            </div>
-            """, unsafe_allow_html=True)
-
-        with col2:
-            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{name}</span>", unsafe_allow_html=True)
-
-        with col3:
-            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lab.lab_l:.2f}</span>", unsafe_allow_html=True)
-
-        with col4:
-            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lab.lab_a:.2f}</span>", unsafe_allow_html=True)
-
-        with col5:
-            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lab.lab_b:.2f}</span>", unsafe_allow_html=True)
-
-        with col6:
-            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_c:.2f}</span>", unsafe_allow_html=True)
-
-        with col7:
-            st.markdown(f"<span style='font-size:1.1em; font-weight:500'>{lch.lch_h:.1f}°</span>", unsafe_allow_html=True)
-
-
-    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
-        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
-        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
-        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
-        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
-
-        st.markdown("#### ΔE между введённым цветом и каждым цветом из CXF:")
-        for name, lab, _, _ in results:
-            delta = delta_e_simple(user_lab, lab)
-            st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
-
-    
-    with st.expander("Показать цветовой круг (LCh)"):
-        st.markdown("""
-        <div style='margin-top: 1rem;'>
-          <h3 style='color: #444;'>Цветовой круг (LCh)</h3>
-        </div>
-        """, unsafe_allow_html=True)
-
-        fig = plt.figure(figsize=(4, 4), dpi=100)
-        ax = fig.add_subplot(111, polar=True)
+    for file_name, results in all_results.items():
+        st.markdown(f"**Файл:** `{file_name}`")
+        header_cols = st.columns([1, 4, 1, 1, 1, 1, 1])
+        for label, col in zip(["Цвет", "Название", "L", "a", "b", "C", "h°"], header_cols):
+            col.markdown(f"**{label}**")
 
         for name, lab, rgb, lch in results:
-            theta = np.deg2rad(lch.lch_h)
-            r = lch.lch_c
-            ax.scatter(theta, r, color=np.array(rgb)/255, s=40, edgecolor='black', linewidth=0.5, alpha=0.9)
+            col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 4, 1, 1, 1, 1, 1])
+            with col1:
+                st.markdown(f"""
+                <div style='width:36px; height:36px; background-color:rgb({rgb[0]},{rgb[1]},{rgb[2]}); border:1px solid #ccc;'></div>
+                """, unsafe_allow_html=True)
+            with col2:
+                col2.markdown(f"{name}")
+            with col3:
+                col3.markdown(f"{lab.lab_l:.2f}")
+            with col4:
+                col4.markdown(f"{lab.lab_a:.2f}")
+            with col5:
+                col5.markdown(f"{lab.lab_b:.2f}")
+            with col6:
+                col6.markdown(f"{lch.lch_c:.2f}")
+            with col7:
+                col7.markdown(f"{lch.lch_h:.1f}°")
 
-        ax.set_theta_zero_location('E')
-        ax.set_theta_direction(-1)
-        ax.set_rlabel_position(135)
-        ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=10)
-        ax.tick_params(labelsize=8)
-        ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
+    if len(all_results) >= 2:
+        st.markdown("---")
+        st.markdown("### 📏 Сравнение совпадающих названий между файлами")
 
-        st.pyplot(fig, use_container_width=False)
+        files = list(all_results.keys())
+        base_file = files[0]
+        compare_file = files[1]
 
-else:
-    st.info("Пожалуйста, загрузите CXF-файл для обработки.")
+        base_colors = {name: lab for name, lab, _, _ in all_results[base_file]}
+        compare_colors = {name: lab for name, lab, _, _ in all_results[compare_file]}
 
+        common_names = set(base_colors.keys()) & set(compare_colors.keys())
+
+        if not common_names:
+            st.info("Нет совпадающих названий цветов между двумя файлами.")
+        else:
+            for name in sorted(common_names):
+                lab1 = base_colors[name]
+                lab2 = compare_colors[name]
+                delta = delta_e_simple(lab1, lab2)
+                st.markdown(f"**{name}** → ΔE = {delta:.2f}")
 
 # Футер
 st.markdown("---")
