@@ -132,28 +132,32 @@ if uploaded_files:
             with col7:
                 col7.markdown(f"{lch.lch_h:.1f}°")
 
-    if len(all_results) >= 2:
-        st.markdown("---")
-        st.markdown("### 📏 Сравнение совпадающих названий между файлами")
+    with st.expander("🌈 Показать цветовой круг (LCh)"):
+        st.markdown("Отображение распределения всех цветов по цветовому кругу (Hue vs Chroma)")
+        fig = plt.figure(figsize=(4, 4), dpi=100)
+        ax = fig.add_subplot(111, polar=True)
 
-        files = list(all_results.keys())
-        base_file = files[0]
-        compare_file = files[1]
+        for results in all_results.values():
+            for name, _, rgb, lch in results:
+                ax.scatter(np.deg2rad(lch.lch_h), lch.lch_c, color=np.array(rgb)/255, s=40)
 
-        base_colors = {name: lab for name, lab, _, _ in all_results[base_file]}
-        compare_colors = {name: lab for name, lab, _, _ in all_results[compare_file]}
+        ax.set_rticks([20, 40, 60, 80, 100])
+        ax.set_theta_zero_location("N")
+        ax.set_theta_direction(-1)
+        st.pyplot(fig, use_container_width=False)
 
-        common_names = set(base_colors.keys()) & set(compare_colors.keys())
+    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
+        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
+        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
-        if not common_names:
-            st.info("Нет совпадающих названий цветов между двумя файлами.")
-        else:
-            for name in sorted(common_names):
-                lab1 = base_colors[name]
-                lab2 = compare_colors[name]
-                delta = delta_e_simple(lab1, lab2)
-                st.markdown(f"**{name}** → ΔE = {delta:.2f}")
-
+        st.markdown("### ΔE между введённым цветом и каждым цветом из CXF:")
+        for file_name, results in all_results.items():
+            st.markdown(f"**Файл:** `{file_name}`")
+            for name, lab, _, _ in results:
+                delta = delta_e_simple(user_lab, lab)
+                st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
 
 # Футер
 st.markdown("---")
