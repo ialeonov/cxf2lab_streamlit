@@ -154,6 +154,7 @@ if uploaded_files:
                 delta = delta_e_simple(lab1, lab2)
                 st.markdown(f"**{name}** → ΔE = {delta:.2f}")
 
+
 # Футер
 st.markdown("---")
 st.markdown(
