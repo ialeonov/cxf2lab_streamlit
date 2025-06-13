@@ -158,10 +158,10 @@ if uploaded_file:
         input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
         user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 
-    st.markdown("#### ΔE между введённым цветом и каждым цветом из CXF:")
-    for name, lab, _, _ in results:
-        delta = delta_e_simple(user_lab, lab)
-        st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
+        st.markdown("#### ΔE между введённым цветом и каждым цветом из CXF:")
+        for name, lab, _, _ in results:
+            delta = delta_e_simple(user_lab, lab)
+            st.markdown(f"• <strong>{name}</strong>: ΔE = {delta:.2f}", unsafe_allow_html=True)
 
     
     with st.expander("Показать цветовой круг (LCh)"):
