@@ -158,6 +158,13 @@ if uploaded_file:
         with col8:
             st.markdown("<span style='font-size:1.1em; font-weight:500'>—</span>", unsafe_allow_html=True)
 
+
+    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
+        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
+        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
+        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
+        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
+
     with st.expander("🌈 Показать цветовой круг (LCh)"):
         st.markdown("""
         <div style='margin-top: 1rem;'>
@@ -182,11 +189,6 @@ if uploaded_file:
 
         st.pyplot(fig, use_container_width=False)
 
-    with st.expander("🎯 Ввести координаты цвета для сравнения (ΔE)"):
-        input_L = st.number_input("L*", min_value=0.0, max_value=100.0, value=50.0)
-        input_a = st.number_input("a*", min_value=-128.0, max_value=128.0, value=0.0)
-        input_b = st.number_input("b*", min_value=-128.0, max_value=128.0, value=0.0)
-        user_lab = LabColor(lab_l=input_L, lab_a=input_a, lab_b=input_b)
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
