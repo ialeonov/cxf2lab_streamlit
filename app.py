@@ -167,51 +167,23 @@ if uploaded_file:
           <h3 style='color: #444;'>🌈 Цветовой круг (LCh)</h3>
         </div>
         """, unsafe_allow_html=True)
-    
+
         fig = plt.figure(figsize=(4, 4), dpi=100)
         ax = fig.add_subplot(111, polar=True)
-    
-        # === Генерация цветного фона ===
-        resolution = 300
-        max_c = 100
-        L_fixed = 60
-    
-        h_vals = np.linspace(0, 2*np.pi, resolution)
-        c_vals = np.linspace(0, max_c, resolution)
-        hh, cc = np.meshgrid(h_vals, c_vals)
-        rgb_img = np.zeros((resolution, resolution, 3))
-    
-        for i in range(resolution):
-            for j in range(resolution):
-                h_deg = np.degrees(hh[i, j]) % 360
-                c = cc[i, j]
-                try:
-                    lch = LCHabColor(L_fixed, c, h_deg)
-                    rgb = convert_color(lch, sRGBColor)
-                    rgb_img[i, j, :] = [rgb.clamped_rgb_r, rgb.clamped_rgb_g, rgb.clamped_rgb_b]
-                except:
-                    rgb_img[i, j, :] = [1, 1, 1]  # белый если ошибка
-    
-        ax.imshow(
-            np.flipud(rgb_img), extent=[0, 2*np.pi, 0, max_c],
-            aspect='auto', origin='lower'
-        )
-    
-        # === Цветовые точки из данных ===
+
         for name, lab, rgb, lch in results:
             theta = np.deg2rad(lch.lch_h)
             r = lch.lch_c
             ax.scatter(theta, r, color=np.array(rgb)/255, s=40, edgecolor='black', linewidth=0.5, alpha=0.9)
-    
+
         ax.set_theta_zero_location('E')
         ax.set_theta_direction(-1)
         ax.set_rlabel_position(135)
         ax.set_title("Оттенки (h°) и насыщенность (C)", va='bottom', fontsize=10)
         ax.tick_params(labelsize=8)
         ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.6)
-    
-        st.pyplot(fig, use_container_width=False)
 
+        st.pyplot(fig, use_container_width=False)
 else:
     st.info("Пожалуйста, загрузите CXF-файл для обработки.")
 
