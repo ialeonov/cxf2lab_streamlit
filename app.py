@@ -114,7 +114,7 @@ if uploaded_file:
     </div>
     """, unsafe_allow_html=True)
 
-    header_cols = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
+    header_cols = st.columns([1, 4, 1, 1, 1, 1, 1])
     with header_cols[0]: st.markdown("**Цвет**")
     with header_cols[1]: st.markdown("**Название**")
     with header_cols[2]: st.markdown("**L**")
